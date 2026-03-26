@@ -6,8 +6,8 @@ import retrofit2.http.GET
 
 interface SupermarketApiService {
     @GET("data/products.json")
-    suspend fun getProducts(): List<ProductsResponse>
+    suspend fun getProducts(): ProductsResponse
 
     @GET("data/promotions.json")
-    suspend fun getPromotions(): List<PromotionsResponse>
+    suspend fun getPromotions(): PromotionsResponse
 }
