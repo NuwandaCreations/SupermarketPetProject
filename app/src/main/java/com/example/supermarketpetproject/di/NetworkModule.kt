@@ -1,7 +1,10 @@
 package com.example.supermarketpetproject.di
 
 import com.example.supermarketpetproject.productlist.data.remote.SupermarketApiService
+import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Named
 import jakarta.inject.Singleton
 import kotlinx.serialization.json.Json
@@ -12,6 +15,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 
+@Module
+@InstallIn(SingletonComponent::class)
 object NetworkModule {
 
     @Provides
