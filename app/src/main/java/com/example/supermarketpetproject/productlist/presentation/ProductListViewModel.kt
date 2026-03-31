@@ -2,6 +2,7 @@ package com.example.supermarketpetproject.productlist.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.supermarketpetproject.productlist.domain.model.SortOption
 import com.example.supermarketpetproject.productlist.domain.usecases.GetProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,7 +38,8 @@ class ProductListViewModel @Inject constructor(
                 _uiState.value = ProductListUiState.Success(
                     products = products,
                     categories = categories,
-                    selectedCategory = null
+                    selectedCategory = null,
+                    sortOption = SortOption.NONE
                 )
             }
             .catch { error ->
@@ -50,6 +52,13 @@ class ProductListViewModel @Inject constructor(
         viewModelScope.launch {
             //Llamar settingRepository
         }
+    }
+
+    fun setSortOption(sortOption: SortOption) {
+        viewModelScope.launch {
+            //Llamar settingRepository
+        }
+
     }
 
 }

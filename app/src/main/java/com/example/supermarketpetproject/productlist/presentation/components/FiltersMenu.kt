@@ -10,15 +10,21 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.supermarketpetproject.productlist.domain.model.SortOption
 import com.example.supermarketpetproject.productlist.presentation.ProductListUiState
 
 @Composable
-fun FiltersMenu(state: ProductListUiState.Success, onCategorySelected: (String?) -> Unit) {
+fun FiltersMenu(
+    state: ProductListUiState.Success,
+    onCategorySelected: (String?) -> Unit,
+    onSortSelected: (SortOption) -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,6 +59,47 @@ fun FiltersMenu(state: ProductListUiState.Success, onCategorySelected: (String?)
                         }
                     )
                 }
+            }
+            HorizontalDivider()
+            Text("Ordenar por")
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                FilterChip(
+                    selected = state.sortOption == SortOption.PRICE_ASC,
+                    onClick = { onSortSelected(SortOption.PRICE_ASC) },
+                    label = {
+                        Text(
+                            text = "Precio ↑",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+                FilterChip(
+                    selected = state.sortOption == SortOption.PRICE_DESC,
+                    onClick = { onSortSelected(SortOption.PRICE_DESC) },
+                    label = {
+                        Text(
+                            text = "Precio ↓",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+                FilterChip(
+                    selected = state.sortOption == SortOption.DISCOUNT,
+                    onClick = { onSortSelected(SortOption.DISCOUNT) },
+                    label = {
+                        Text(
+                            text = "Descuento",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    },
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
     }
