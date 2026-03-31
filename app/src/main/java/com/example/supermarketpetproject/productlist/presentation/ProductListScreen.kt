@@ -1,9 +1,13 @@
 package com.example.supermarketpetproject.productlist.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -16,9 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.supermarketpetproject.productlist.domain.model.Product
+import com.example.supermarketpetproject.productlist.presentation.components.FiltersMenu
 
 @Composable
 fun ProductListScreen(
@@ -68,7 +75,22 @@ fun ProductListScreen(
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    state.selectedCategory
+                    FiltersMenu(state = state) { category ->
+                        productListViewModel.setCategory(category)
+                    }
+                    LazyColumn {
+                        items(state.products) { product: Product ->
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .height(50.dp)
+                                    .background(Color.Red),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(text = product.name)
+                            }
+                        }
+                    }
                 }
             }
         }

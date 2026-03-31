@@ -6,13 +6,14 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import com.example.supermarketpetproject.productlist.presentation.ProductListScreen
 
 @Composable
 fun NavGraph() {
     val backStack = rememberNavBackStack(Screen.ProductList)
     val entries = entryProvider<NavKey> {
         entry(Screen.ProductList) {
-            Text("ProductList")
+            ProductListScreen()
         }
         entry(Screen.Cart) {
             Text("Cart")
