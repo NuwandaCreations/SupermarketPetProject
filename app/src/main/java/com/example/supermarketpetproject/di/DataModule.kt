@@ -7,8 +7,10 @@ import com.example.supermarketpetproject.core.domain.coroutines.DispatchersProvi
 import com.example.supermarketpetproject.productlist.data.local.database.SupermarketDB
 import com.example.supermarketpetproject.productlist.data.local.database.dao.ProductDao
 import com.example.supermarketpetproject.productlist.data.local.database.dao.PromotionDao
-import com.example.supermarketpetproject.productlist.data.repositories.ProductRepositoryImp
+import com.example.supermarketpetproject.productlist.data.repositories.ProductRepositoryImpl
+import com.example.supermarketpetproject.productlist.data.repositories.PromotionsRepositoryImpl
 import com.example.supermarketpetproject.productlist.domain.repositories.ProductRepository
+import com.example.supermarketpetproject.productlist.domain.repositories.PromotionsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,8 +29,14 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideProductRepository(productRepositoryImp: ProductRepositoryImp) : ProductRepository {
-        return productRepositoryImp
+    fun providePromotionsRepository(promotionsRepositoryImpl: PromotionsRepositoryImpl) : PromotionsRepository {
+        return promotionsRepositoryImpl
+    }
+
+    @Provides
+    @Singleton
+    fun provideProductRepository(productRepositoryImpl: ProductRepositoryImpl) : ProductRepository {
+        return productRepositoryImpl
     }
 
     @Provides
