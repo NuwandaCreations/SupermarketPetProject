@@ -48,6 +48,7 @@ fun PromotionEntity.toDomain(json: Json): Promotion? {
         productIds = decodePromotionsIds,
         type = finalType,
         value = finalOfferValue,
+        buyQuantity = buyX,
         startTime = Instant.ofEpochSecond(startAtEpoch),
         endTime = Instant.ofEpochSecond(endAtEpoch)
         )

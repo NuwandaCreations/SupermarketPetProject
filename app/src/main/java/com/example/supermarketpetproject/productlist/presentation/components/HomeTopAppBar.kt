@@ -17,8 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 @Composable
 fun HomeTopAppBar(
     isFiltersVisible: Boolean = true,
-    onFilterSelected: (Boolean) -> Unit  = {},
-    onSettingsSelected: () -> Unit = {}
+    onFilterSelected: (Boolean) -> Unit,
+    onSettingsSelected: () -> Unit,
 ) {
     TopAppBar(
         title = {

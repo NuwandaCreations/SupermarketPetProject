@@ -7,19 +7,20 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.example.supermarketpetproject.productlist.presentation.ProductListScreen
+import com.example.supermarketpetproject.settings.presentation.SettingsScreen
 
 @Composable
 fun NavGraph() {
     val backStack = rememberNavBackStack(Screen.ProductList)
     val entries = entryProvider<NavKey> {
         entry(Screen.ProductList) {
-            ProductListScreen()
+            ProductListScreen(navigateToSettings = { backStack.add(Screen.Settings) })
         }
         entry(Screen.Cart) {
             Text("Cart")
         }
         entry(Screen.Settings) {
-            Text("Settings")
+            SettingsScreen(onBack = { backStack.removeLastOrNull() })
         }
         entry(Screen.ProductDetail(productId = "1")) {
             Text("ProductDetail")

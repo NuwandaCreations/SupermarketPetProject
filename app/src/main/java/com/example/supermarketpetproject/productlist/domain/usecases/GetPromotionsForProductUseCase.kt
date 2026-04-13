@@ -27,7 +27,7 @@ class GetPromotionsForProductUseCase @Inject constructor() {
         if (buyPayPromotions != null) {
             val buy = buyPayPromotions.buyQuantity ?: return null
             val pay = buyPayPromotions.value.toInt().coerceIn(0, buy)
-            return ProductPromotion.BuyXPayY(buy = buy, pay = pay, label = "{$buy} por {$pay}")
+            return ProductPromotion.BuyXPayY(buy = buy, pay = pay, label = "${buy} x ${pay}")
         }
 
         return null
