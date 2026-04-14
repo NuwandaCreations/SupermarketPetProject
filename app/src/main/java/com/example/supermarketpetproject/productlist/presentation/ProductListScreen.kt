@@ -42,7 +42,8 @@ import com.example.supermarketpetproject.productlist.presentation.components.Pro
 @Composable
 fun ProductListScreen(
     productListViewModel: ProductListViewModel = hiltViewModel(),
-    navigateToSettings:() -> Unit
+    navigateToSettings: () -> Unit,
+    navigateToProductDetail: (String) -> Unit
 ) {
     val uiState by productListViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -147,7 +148,9 @@ fun ProductListScreen(
                     } else {
                         LazyColumn {
                             items(state.products) { item: ProductWithPromotion ->
-                                ProductItem(item = item, onClick = {})
+                                ProductItem(
+                                    item = item,
+                                    onClick = { navigateToProductDetail(it.product.id) })
                             }
                         }
                     }

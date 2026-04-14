@@ -1,4 +1,4 @@
-package com.example.supermarketpetproject.detail
+package com.example.supermarketpetproject.detail.presentation
 
 import com.example.supermarketpetproject.productlist.domain.model.ProductWithPromotion
 

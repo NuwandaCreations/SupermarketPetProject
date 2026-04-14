@@ -1,4 +1,4 @@
-package com.example.supermarketpetproject.detail
+package com.example.supermarketpetproject.detail.presentation
 
 sealed interface ProductDetailEvent {
     data class ShowMessage(val message: String) : ProductDetailEvent

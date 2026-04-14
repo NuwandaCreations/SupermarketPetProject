@@ -1,4 +1,4 @@
-package com.example.supermarketpetproject.detail
+package com.example.supermarketpetproject.detail.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
