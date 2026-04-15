@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.example.supermarketpetproject.R
 import com.example.supermarketpetproject.core.presentation.components.MarketTopAppBar
+import com.example.supermarketpetproject.detail.presentation.components.AddToCartButton
 import com.example.supermarketpetproject.productlist.domain.model.ProductPromotion
 
 @Composable
@@ -54,7 +55,12 @@ fun ProductDetailScreen(
                 onBackSelected = onBack
             )
         },
-        bottomBar = {}
+        bottomBar = {
+            AddToCartButton(
+                product = uiState.item?.product,
+                isLoading = uiState.isLoading
+            ) { productDetailViewModel.addToCart() }
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -84,7 +90,7 @@ fun ProductDetailScreen(
                     ) {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                             shape = RoundedCornerShape(16.dp)
                         ) {
                             Column(
@@ -94,7 +100,7 @@ fun ProductDetailScreen(
                                 AsyncImage(
                                     model = product.imageUrl,
                                     contentDescription = product.name,
-                                    contentScale = ContentScale.Crop,
+                                    contentScale = ContentScale.Fit,
                                     placeholder = painterResource(R.drawable.product),
                                     error = painterResource(R.drawable.not_found)
                                 )
@@ -120,7 +126,9 @@ fun ProductDetailScreen(
                                     )
                                 }
 
-                                Text(text = product.description)
+                                if (product.description.isNotBlank()) {
+                                    Text(text = product.description)
+                                }
 
                                 HorizontalDivider()
 
@@ -213,7 +221,7 @@ fun ProductDetailScreen(
                                             ),
                                             style = MaterialTheme.typography.bodyLarge,
                                             fontWeight = FontWeight.Bold,
-                                            color = colorStock
+                                            color = MaterialTheme.colorScheme.onErrorContainer
                                         )
                                     }
                                 }

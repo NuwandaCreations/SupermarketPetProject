@@ -5,9 +5,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import com.example.supermarketpetproject.cart.data.local.database.dao.CartItemDao
 import com.example.supermarketpetproject.core.data.coroutines.DefaultDispatchersProvider
 import com.example.supermarketpetproject.core.domain.coroutines.DispatchersProvider
-import com.example.supermarketpetproject.productlist.data.local.database.SupermarketDB
+import com.example.supermarketpetproject.core.data.local.database.SupermarketDB
 import com.example.supermarketpetproject.productlist.data.local.database.dao.ProductDao
 import com.example.supermarketpetproject.productlist.data.local.database.dao.PromotionDao
 import com.example.supermarketpetproject.productlist.data.repositories.ProductRepositoryImpl
@@ -51,6 +52,9 @@ object DataModule {
 
     @Provides
     fun providePromotionDao(database: SupermarketDB): PromotionDao = database.promotionDao()
+
+    @Provides
+    fun provideCartItemDao(database: SupermarketDB): CartItemDao = database.cartItemDao()
 
     @Provides
     @Singleton
