@@ -1,6 +1,7 @@
 package com.example.supermarketpetproject.detail.presentation
 
 sealed interface ProductDetailEvent {
-    data class ShowMessage(val message: String) : ProductDetailEvent
-    data class ShowError(val message: String) : ProductDetailEvent
+    data object UNKOWN_ERROR : ProductDetailEvent
+    data object NETWORK_ERROR : ProductDetailEvent
+    data object INSUFFICIENT_STOCK_ERROR: ProductDetailEvent
 }

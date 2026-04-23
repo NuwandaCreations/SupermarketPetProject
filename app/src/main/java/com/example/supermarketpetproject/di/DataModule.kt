@@ -6,9 +6,11 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.example.supermarketpetproject.cart.data.local.database.dao.CartItemDao
+import com.example.supermarketpetproject.cart.data.repository.CartItemRepositoryImpl
+import com.example.supermarketpetproject.cart.domain.repository.CartItemRepository
 import com.example.supermarketpetproject.core.data.coroutines.DefaultDispatchersProvider
-import com.example.supermarketpetproject.core.domain.coroutines.DispatchersProvider
 import com.example.supermarketpetproject.core.data.local.database.SupermarketDB
+import com.example.supermarketpetproject.core.domain.coroutines.DispatchersProvider
 import com.example.supermarketpetproject.productlist.data.local.database.dao.ProductDao
 import com.example.supermarketpetproject.productlist.data.local.database.dao.PromotionDao
 import com.example.supermarketpetproject.productlist.data.repositories.ProductRepositoryImpl
@@ -37,13 +39,13 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun providePromotionsRepository(promotionsRepositoryImpl: PromotionsRepositoryImpl) : PromotionsRepository {
+    fun providePromotionsRepository(promotionsRepositoryImpl: PromotionsRepositoryImpl): PromotionsRepository {
         return promotionsRepositoryImpl
     }
 
     @Provides
     @Singleton
-    fun provideProductRepository(productRepositoryImpl: ProductRepositoryImpl) : ProductRepository {
+    fun provideProductRepository(productRepositoryImpl: ProductRepositoryImpl): ProductRepository {
         return productRepositoryImpl
     }
 
@@ -70,7 +72,13 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideSettingsRepository(settingsRepositoryImpl: SettingsRepositoryImpl) : SettingsRepository {
+    fun provideSettingsRepository(settingsRepositoryImpl: SettingsRepositoryImpl): SettingsRepository {
         return settingsRepositoryImpl
+    }
+
+    @Provides
+    @Singleton
+    fun provideCartRepository(cartItemRepositoryImpl: CartItemRepositoryImpl): CartItemRepository {
+        return cartItemRepositoryImpl
     }
 }

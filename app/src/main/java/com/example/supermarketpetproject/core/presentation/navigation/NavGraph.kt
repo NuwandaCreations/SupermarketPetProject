@@ -1,11 +1,11 @@
 package com.example.supermarketpetproject.core.presentation.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import com.example.supermarketpetproject.cart.presentation.CartScreen
 import com.example.supermarketpetproject.detail.presentation.ProductDetailScreen
 import com.example.supermarketpetproject.productlist.presentation.ProductListScreen
 import com.example.supermarketpetproject.settings.presentation.SettingsScreen
@@ -19,11 +19,12 @@ fun NavGraph() {
                 navigateToSettings = { backStack.add(Screen.Settings) },
                 navigateToProductDetail = { productId ->
                     backStack.add(Screen.ProductDetail(productId))
-                }
+                },
+                navigateToCart = { backStack.add(Screen.Cart) }
             )
         }
         entry(Screen.Cart) {
-            Text("Cart")
+            CartScreen(onBack = { backStack.removeLastOrNull() })
         }
         entry(Screen.Settings) {
             SettingsScreen(onBack = { backStack.removeLastOrNull() })

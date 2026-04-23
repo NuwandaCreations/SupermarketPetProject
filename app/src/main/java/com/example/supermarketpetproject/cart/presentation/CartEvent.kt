@@ -1,5 +1,5 @@
 package com.example.supermarketpetproject.cart.presentation
 
 sealed interface CartEvent {
-    data class ShowMessage(val message: String)
+    data class ShowMessage(val message: String) : CartEvent
 }

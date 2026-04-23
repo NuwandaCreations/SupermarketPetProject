@@ -43,7 +43,8 @@ import com.example.supermarketpetproject.productlist.presentation.components.Pro
 fun ProductListScreen(
     productListViewModel: ProductListViewModel = hiltViewModel(),
     navigateToSettings: () -> Unit,
-    navigateToProductDetail: (String) -> Unit
+    navigateToProductDetail: (String) -> Unit,
+    navigateToCart: () -> Unit
 ) {
     val uiState by productListViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -70,7 +71,8 @@ fun ProductListScreen(
                         showFilters
                     )
                 },
-                onSettingsSelected = navigateToSettings
+                onSettingsSelected = navigateToSettings,
+                onCartSelected = navigateToCart
             )
         }
     ) { paddingValues ->

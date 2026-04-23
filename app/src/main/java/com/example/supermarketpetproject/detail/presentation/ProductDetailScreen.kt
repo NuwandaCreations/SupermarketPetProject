@@ -16,11 +16,14 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -43,9 +46,29 @@ fun ProductDetailScreen(
     productDetailViewModel: ProductDetailViewModel = hiltViewModel()
 ) {
     val uiState by productDetailViewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
 
     LaunchedEffect(productId) {
         productDetailViewModel.loadProducts(productId)
+    }
+
+    LaunchedEffect(Unit) {
+        productDetailViewModel.events.collect { event ->
+            when (event) {
+                ProductDetailEvent.INSUFFICIENT_STOCK_ERROR -> {
+                    snackbarHostState.showSnackbar("No hay sudiciente stock")
+                }
+
+                ProductDetailEvent.NETWORK_ERROR -> {
+                    snackbarHostState.showSnackbar("No hay internet, compruebe su conexión")
+                }
+
+                ProductDetailEvent.UNKOWN_ERROR -> {
+                    snackbarHostState.showSnackbar("Error inesperado, vuelva a intentarlo")
+                }
+            }
+        }
     }
 
     Scaffold(
@@ -60,6 +83,9 @@ fun ProductDetailScreen(
                 product = uiState.item?.product,
                 isLoading = uiState.isLoading
             ) { productDetailViewModel.addToCart() }
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
         }
     ) { paddingValues ->
         Column(

@@ -5,10 +5,11 @@ import com.example.supermarketpetproject.cart.presentation.model.CartItemWithPro
 
 sealed class CartUiState {
     data class Success(
-        val cartItems: List<CartItemWithPromotion>,
         val summary: CartSummary? = null,
+        val cartItems: List<CartItemWithPromotion>,
         val isLoading: Boolean
     ) : CartUiState()
 
     data object Loading : CartUiState()
+    data class Error(val message: String) : CartUiState()
 }
