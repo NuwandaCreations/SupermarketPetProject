@@ -1,5 +1,6 @@
 package com.example.supermarketpetproject.productlist.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,21 +20,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.supermarketpetproject.productlist.domain.model.Product
+import com.example.supermarketpetproject.productlist.domain.model.ProductPromotion
+import com.example.supermarketpetproject.productlist.domain.model.ProductWithPromotion
 import java.util.Locale
 
 @Composable
-fun ProductItem(product: Product, onClick: (Product) -> Unit) {
+fun ProductItem(item: ProductWithPromotion, onClick: (ProductWithPromotion) -> Unit) {
+    val product = item.product
+    val promotion = item.promotion
+    val promoBadge = when (promotion) {
+        is ProductPromotion.BuyXPayY -> promotion.label
+        is ProductPromotion.Percent -> "-${promotion.percent.toInt()}%"
+        null -> null
+    }
+
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, top = 16.dp),
-        onClick = { onClick(product) },
+        onClick = { onClick(item) },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(contentColor = MaterialTheme.colorScheme.surfaceContainer)
@@ -65,7 +79,24 @@ fun ProductItem(product: Product, onClick: (Product) -> Unit) {
                     )
                 }
 
-                //Promotion
+                if (promoBadge != null) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .background(
+                                color = MaterialTheme.colorScheme.error,
+                                shape = RoundedCornerShape(4.dp)
+                            )
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = promoBadge,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onError,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
             }
 
             Column(
@@ -75,6 +106,7 @@ fun ProductItem(product: Product, onClick: (Product) -> Unit) {
                 Text(
                     text = product.name,
                     style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -94,8 +126,41 @@ fun ProductItem(product: Product, onClick: (Product) -> Unit) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (!true) {
-                        //mostramos vista promoción
+                    if (promotion is ProductPromotion.Percent) {
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(
+                                    text = "Antes",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = String.format(Locale.getDefault(), "%.2f", product.price),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textDecoration = TextDecoration.LineThrough
+                                )
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(
+                                    text = "Ahora",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = String.format(Locale.getDefault(), "%.2f", promotion.discountPrice),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
                     } else {
                         Text(
                             text = String.format(Locale.getDefault(), "%.2f", product.price),

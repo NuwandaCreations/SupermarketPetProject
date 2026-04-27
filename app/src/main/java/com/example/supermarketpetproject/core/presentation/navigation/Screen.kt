@@ -18,5 +18,4 @@ sealed interface Screen: NavKey {
     @Serializable
     data class ProductDetail(val productId: String): Screen
 
-
 }

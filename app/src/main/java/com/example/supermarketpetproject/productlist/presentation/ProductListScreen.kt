@@ -1,11 +1,14 @@
 package com.example.supermarketpetproject.productlist.presentation
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,16 +34,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.supermarketpetproject.productlist.domain.model.Product
+import com.example.supermarketpetproject.cart.presentation.CartUiState
+import com.example.supermarketpetproject.cart.presentation.CartViewModel
+import com.example.supermarketpetproject.productlist.domain.model.ProductWithPromotion
 import com.example.supermarketpetproject.productlist.presentation.components.FiltersMenu
+import com.example.supermarketpetproject.productlist.presentation.components.HomeTopAppBar
 import com.example.supermarketpetproject.productlist.presentation.components.ProductItem
 
 @Composable
 fun ProductListScreen(
-    productListViewModel: ProductListViewModel = hiltViewModel()
+    productListViewModel: ProductListViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel(),
+    navigateToSettings: () -> Unit,
+    navigateToProductDetail: (String) -> Unit,
+    navigateToCart: () -> Unit
 ) {
     val uiState by productListViewModel.uiState.collectAsStateWithLifecycle()
+    val cartUiState by cartViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val filtersVisible by productListViewModel.filterVisible.collectAsStateWithLifecycle()
+
 
     LaunchedEffect(Unit) {
         productListViewModel.events.collect { event ->
@@ -52,8 +65,31 @@ fun ProductListScreen(
         }
     }
 
+    val cartItemsCount = remember(cartUiState) {
+        when (val state = cartUiState) {
+            is CartUiState.Success -> {
+                state.cartItems.sumOf { it.cartItem.quantity }
+            }
+
+            else -> 0
+        }
+    }
+
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            HomeTopAppBar(
+                isFiltersVisible = filtersVisible,
+                cartItemsCount = cartItemsCount,
+                onFilterSelected = { showFilters ->
+                    productListViewModel.setFiltersVisible(
+                        showFilters
+                    )
+                },
+                onSettingsSelected = navigateToSettings,
+                onCartSelected = navigateToCart
+            )
+        }
     ) { paddingValues ->
         when (val state = uiState) {
             is ProductListUiState.Loading -> {
@@ -71,9 +107,14 @@ fun ProductListScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues)
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "ERROR", fontSize = 24.sp, color = Color.Red)
+                    Text(
+                        text = "ERROR",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
 
@@ -83,12 +124,19 @@ fun ProductListScreen(
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    FiltersMenu(state = state, onCategorySelected = { category ->
-                        productListViewModel.setCategory(category)
-                    }, onSortSelected = { sortOption ->
-                        productListViewModel.setSortOption(sortOption)
-                    }
+                    AnimatedVisibility(
+                        visible = filtersVisible,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
                     )
+                    {
+                        FiltersMenu(state = state, onCategorySelected = { category ->
+                            productListViewModel.setCategory(category)
+                        }, onSortSelected = { sortOption ->
+                            productListViewModel.setSortOption(sortOption)
+                        }
+                        )
+                    }
                     Text(
                         "${state.products.size} productos",
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
@@ -121,8 +169,10 @@ fun ProductListScreen(
                         }
                     } else {
                         LazyColumn {
-                            items(state.products) { product: Product ->
-                                ProductItem(product = product, onClick = {})
+                            items(state.products) { item: ProductWithPromotion ->
+                                ProductItem(
+                                    item = item,
+                                    onClick = { navigateToProductDetail(it.product.id) })
                             }
                         }
                     }
