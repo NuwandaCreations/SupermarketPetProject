@@ -67,6 +67,10 @@ fun ProductDetailScreen(
                 ProductDetailEvent.UNKOWN_ERROR -> {
                     snackbarHostState.showSnackbar("Error inesperado, vuelva a intentarlo")
                 }
+
+                ProductDetailEvent.SUCCES_ADD_TO_CART -> {
+                    snackbarHostState.showSnackbar("Agregado al carrito")
+                }
             }
         }
     }
@@ -117,7 +121,8 @@ fun ProductDetailScreen(
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                         ) {
                             Column(
                                 modifier = Modifier.padding(24.dp),
@@ -134,6 +139,7 @@ fun ProductDetailScreen(
                                 Text(
                                     text = product.name,
                                     style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.Bold
                                 )
 
@@ -153,7 +159,11 @@ fun ProductDetailScreen(
                                 }
 
                                 if (product.description.isNotBlank()) {
-                                    Text(text = product.description)
+                                    Text(
+                                        text = product.description,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
                                 }
 
                                 HorizontalDivider()
@@ -221,7 +231,13 @@ fun ProductDetailScreen(
                                 HorizontalDivider()
 
                                 val hasStock = product.stock > 0
-                                val colorStock = if (hasStock) {
+                                val stockContainerColor = if (hasStock) {
+                                    MaterialTheme.colorScheme.primaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.errorContainer
+                                }
+
+                                val stockContentColor = if (hasStock) {
                                     MaterialTheme.colorScheme.onPrimaryContainer
                                 } else {
                                     MaterialTheme.colorScheme.onErrorContainer
@@ -235,10 +251,13 @@ fun ProductDetailScreen(
                                     Text(
                                         text = "Stock disponible",
                                         style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.surfaceVariant,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
 
-                                    Surface(shape = RoundedCornerShape(12.dp), color = colorStock) {
+                                    Surface(
+                                        shape = RoundedCornerShape(12.dp),
+                                        color = stockContainerColor
+                                    ) {
                                         Text(
                                             text = if (hasStock) "${product.stock} unidades" else "Sin stock",
                                             modifier = Modifier.padding(
@@ -247,7 +266,7 @@ fun ProductDetailScreen(
                                             ),
                                             style = MaterialTheme.typography.bodyLarge,
                                             fontWeight = FontWeight.Bold,
-                                            color = MaterialTheme.colorScheme.onErrorContainer
+                                            color = stockContentColor
                                         )
                                     }
                                 }

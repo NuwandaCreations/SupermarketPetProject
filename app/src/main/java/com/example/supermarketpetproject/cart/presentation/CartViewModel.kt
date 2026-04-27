@@ -84,7 +84,7 @@ class CartViewModel @Inject constructor(
     fun updateCartItem(productId: String, quantity: Int) {
         viewModelScope.launch {
             try {
-                updateCartItem(productId, quantity)
+                updateCartItemUseCase(productId, quantity)
             } catch (e: Exception) {
                 _events.emit(CartEvent.ShowMessage(e.message.orEmpty()))
             }

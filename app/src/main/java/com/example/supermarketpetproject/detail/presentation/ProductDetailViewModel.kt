@@ -58,6 +58,9 @@ class ProductDetailViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 addToCartUseCase(productId)
+                _events.emit(
+                    ProductDetailEvent.SUCCES_ADD_TO_CART
+                )
             } catch (appError: AppError) {
                 handleError(appError)
             } catch (e: Exception) {

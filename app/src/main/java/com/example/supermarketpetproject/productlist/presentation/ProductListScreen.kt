@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.supermarketpetproject.cart.presentation.CartUiState
+import com.example.supermarketpetproject.cart.presentation.CartViewModel
 import com.example.supermarketpetproject.productlist.domain.model.ProductWithPromotion
 import com.example.supermarketpetproject.productlist.presentation.components.FiltersMenu
 import com.example.supermarketpetproject.productlist.presentation.components.HomeTopAppBar
@@ -42,11 +44,13 @@ import com.example.supermarketpetproject.productlist.presentation.components.Pro
 @Composable
 fun ProductListScreen(
     productListViewModel: ProductListViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel(),
     navigateToSettings: () -> Unit,
     navigateToProductDetail: (String) -> Unit,
     navigateToCart: () -> Unit
 ) {
     val uiState by productListViewModel.uiState.collectAsStateWithLifecycle()
+    val cartUiState by cartViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val filtersVisible by productListViewModel.filterVisible.collectAsStateWithLifecycle()
 
@@ -61,11 +65,22 @@ fun ProductListScreen(
         }
     }
 
+    val cartItemsCount = remember(cartUiState) {
+        when (val state = cartUiState) {
+            is CartUiState.Success -> {
+                state.cartItems.sumOf { it.cartItem.quantity }
+            }
+
+            else -> 0
+        }
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             HomeTopAppBar(
                 isFiltersVisible = filtersVisible,
+                cartItemsCount = cartItemsCount,
                 onFilterSelected = { showFilters ->
                     productListViewModel.setFiltersVisible(
                         showFilters
@@ -92,9 +107,14 @@ fun ProductListScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues)
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "ERROR", fontSize = 24.sp, color = Color.Red)
+                    Text(
+                        text = "ERROR",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
 

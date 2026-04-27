@@ -92,7 +92,7 @@ fun ProductItem(item: ProductWithPromotion, onClick: (ProductWithPromotion) -> U
                         Text(
                             text = promoBadge,
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onError,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -106,6 +106,7 @@ fun ProductItem(item: ProductWithPromotion, onClick: (ProductWithPromotion) -> U
                 Text(
                     text = product.name,
                     style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis

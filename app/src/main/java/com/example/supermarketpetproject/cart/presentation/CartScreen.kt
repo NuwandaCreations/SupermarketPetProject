@@ -209,7 +209,8 @@ fun CartItemCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
         Row(
             modifier = Modifier
@@ -223,9 +224,17 @@ fun CartItemCard(
                 contentScale = ContentScale.Crop
             )
             Column(modifier = Modifier.weight(3f)) {
-                Text(product.name)
-                //Promo
-                Text(("Total: ${currencyFormatter.format(product.price)}"))
+                Text(
+                    product.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                //TODO Promo
+                Text(
+                    text = "Total: ${currencyFormatter.format(product.price)}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 QuantitySelector(
                     modifier = Modifier.background(
                         color = (MaterialTheme.colorScheme.surfaceVariant),
