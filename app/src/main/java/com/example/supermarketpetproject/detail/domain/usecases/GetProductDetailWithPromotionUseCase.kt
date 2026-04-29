@@ -1,5 +1,6 @@
 package com.example.supermarketpetproject.detail.domain.usecases
 
+import com.example.supermarketpetproject.cart.domain.ex.activeAt
 import com.example.supermarketpetproject.productlist.domain.model.ProductWithPromotion
 import com.example.supermarketpetproject.productlist.domain.repositories.ProductRepository
 import com.example.supermarketpetproject.productlist.domain.repositories.PromotionsRepository
@@ -21,9 +22,7 @@ class GetProductDetailWithPromotionUseCase @Inject constructor(
             promotionsRepository.getActivePromotions()
         ) { product, promotions ->
             val now = Instant.now()
-            val activePromotions = promotions.filter {
-                it.startTime <= now && it.endTime >= now
-            }
+            val activePromotions = promotions.activeAt(now)
 
             product?.let {
                 val finalPromotion = getPromotionForProduct(it, activePromotions)

@@ -1,5 +1,6 @@
 package com.example.supermarketpetproject.productlist.domain.usecases
 
+import com.example.supermarketpetproject.cart.domain.ex.activeAt
 import com.example.supermarketpetproject.productlist.domain.model.ProductWithPromotion
 import com.example.supermarketpetproject.productlist.domain.repositories.ProductRepository
 import com.example.supermarketpetproject.productlist.domain.repositories.PromotionsRepository
@@ -23,9 +24,7 @@ class GetProductsUseCase @Inject constructor(
         ) { products, promotions, inStockOnly ->
             val now = Instant.now()
 
-            val activePromotions = promotions.filter {
-                it.startTime <= now && it.endTime >= now
-            }
+            val activePromotions = promotions.activeAt(now)
 
             val stockProducts = if (inStockOnly) {
                 products.filter { it.stock > 0 }

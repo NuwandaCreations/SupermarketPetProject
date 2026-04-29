@@ -1,5 +1,6 @@
 package com.example.supermarketpetproject.cart.domain.usecases
 
+import com.example.supermarketpetproject.cart.domain.ex.activeAt
 import com.example.supermarketpetproject.cart.domain.model.CartItem
 import com.example.supermarketpetproject.cart.domain.model.CartSummary
 import com.example.supermarketpetproject.cart.domain.repository.CartItemRepository
@@ -22,7 +23,7 @@ class GetCartSummaryUseCase @Inject constructor(
     private val promotionsRepository: PromotionsRepository,
     private val getPromotionsForProductUseCase: GetPromotionsForProductUseCase
 ) {
-    suspend operator fun invoke(): Flow<CartSummary> {
+    operator fun invoke(): Flow<CartSummary> {
         return cartItemRepository.getCartItems()
             .flatMapLatest { cartItems ->
                 val ids = cartItems.mapTo(mutableSetOf()) { it.productId }
@@ -45,8 +46,7 @@ class GetCartSummaryUseCase @Inject constructor(
         promotions: List<Promotion>
     ): CartSummary {
         val now = Instant.now()
-        val activePromotions =
-            promotions.filter { it.startTime.isBefore(now) && it.endTime.isAfter(now) }
+        val activePromotions = promotions.activeAt(now)
         val productsById = products.associateBy { it.id }
         var subtotal = 0.0
         var discountTotal = 0.0
