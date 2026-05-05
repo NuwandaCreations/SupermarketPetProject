@@ -24,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -47,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.example.supermarketpetproject.cart.domain.model.CartSummary
 import com.example.supermarketpetproject.cart.presentation.model.CartItemWithPromotion
 import com.example.supermarketpetproject.core.presentation.components.MarketTopAppBar
 import com.example.supermarketpetproject.core.presentation.components.QuantitySelector
@@ -155,7 +157,13 @@ fun CartSuccesStateScreen(
     onDecreaseQuantity: (String, Int) -> Unit,
     onRemove: (String) -> Unit
 ) {
-    Box(modifier = modifier.padding(16.dp)) {
+    val currencyFormatter = remember {
+        NumberFormat.getCurrencyInstance().apply {
+            currency = Currency.getInstance("USD")
+        }
+    }
+
+    Column(modifier = modifier.padding(16.dp)) {
         AnimatedContent(state.cartItems.isEmpty()) { isEmpty ->
             if (isEmpty) {
                 Column(
@@ -182,7 +190,7 @@ fun CartSuccesStateScreen(
                 }
             } else {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -190,6 +198,7 @@ fun CartSuccesStateScreen(
                         CartItemCard(
                             modifier = Modifier.animateItem(),
                             itemWithProduct = itemWithProduct,
+                            currencyFormatter = currencyFormatter,
                             onIncreaseQuantity = { productId, quantity ->
                                 onIncreaseQuantity(
                                     productId,
@@ -211,17 +220,104 @@ fun CartSuccesStateScreen(
 
         if (state.cartItems.isNotEmpty() && state.summary != null) {
             CartSummaryCard(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                summary = state.summary
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                summary = state.summary,
+                currencyFormatter = currencyFormatter
             )
         }
     }
 }
 
 @Composable
+fun CartSummaryCard(modifier: Modifier, summary: CartSummary, currencyFormatter: NumberFormat) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalArrangement =
+                Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                "Resumen del carrito",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primaryContainer,
+                fontWeight = FontWeight.Bold
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    "Subtotal",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+                Text(
+                    currencyFormatter.format(summary.subtotal),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            }
+
+            if (summary.discountTotal > 0) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        "Descuento",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                    Text(
+                        currencyFormatter.format(summary.discountTotal),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            }
+
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.2f),
+                thickness = 1.dp
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    "Total",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    currencyFormatter.format(summary.finalTotal),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+
+}
+
+@Composable
 fun CartItemCard(
     modifier: Modifier,
     itemWithProduct: CartItemWithPromotion,
+    currencyFormatter: NumberFormat,
     onIncreaseQuantity: (String, Int) -> Unit,
     onDecreaseQuantity: (String, Int) -> Unit,
     onRemove: (String) -> Unit
@@ -238,12 +334,6 @@ fun CartItemCard(
 
     val hasDiscount = promotion is ProductPromotion.Percent
     val itemTotal = unitPrice * cartItem.quantity
-
-    val currencyFormatter = remember {
-        NumberFormat.getCurrencyInstance().apply {
-            currency = Currency.getInstance("USD")
-        }
-    }
 
     val dismissState = rememberSwipeToDismissBoxState()
     LaunchedEffect(dismissState.currentValue) {
