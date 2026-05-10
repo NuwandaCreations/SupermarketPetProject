@@ -53,9 +53,9 @@ class ProductRepositoryImpl @Inject constructor(
 
     override fun getProductById(id: String): Flow<Product?> {
         return localDataSource.getProductById(id)
-            .map { entity ->  entity?.toDomain() }
+            .map { entity -> entity?.toDomain() }
             .catch { e ->
-                //analytic.trackError(e)
+                //TODO analytic.trackError(e)
             }
     }
 
