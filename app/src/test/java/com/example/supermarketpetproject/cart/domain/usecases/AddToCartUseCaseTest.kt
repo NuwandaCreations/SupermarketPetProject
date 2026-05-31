@@ -1,9 +1,13 @@
 package com.example.supermarketpetproject.cart.domain.usecases
 
+import com.example.supermarketpetproject.cart.domain.repository.CartItemRepository
 import com.example.supermarketpetproject.core.builders.product
 import com.example.supermarketpetproject.core.domain.model.AppError
 import com.example.supermarketpetproject.core.fakes.FakeCartItemRepository
 import com.example.supermarketpetproject.core.fakes.FakeProductRepository
+import com.example.supermarketpetproject.productlist.domain.repositories.ProductRepository
+import io.mockk.coVerify
+import io.mockk.mockk
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -97,5 +101,18 @@ class AddToCartUseCaseTest {
         assertEquals(cartItems.size, 1)
         assertEquals(cartItems.first().productId, product1.id)
         assertEquals(cartItems.first().quantity, 1)
+    }
+
+    @Test
+    fun zero_quantity_does_not_call_any_reporitory() = runTest {
+        val productRepository = mockk<ProductRepository>()
+        val cartItemRepository = mockk<CartItemRepository>()
+        val useCase = AddToCartUseCase(cartItemRepository, productRepository)
+
+        runCatching { useCase(product1.id, 0) }.exceptionOrNull()
+
+        coVerify(exactly = 0) { productRepository.getProductById(any()) }
+        coVerify(exactly = 0) { cartItemRepository.addToCart(any(), any()) }
+        coVerify(exactly = 0) { cartItemRepository.getCartItemById(any()) }
     }
 }
