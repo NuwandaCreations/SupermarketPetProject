@@ -6,9 +6,13 @@ import com.example.supermarketpetproject.core.domain.model.AppError
 import com.example.supermarketpetproject.core.fakes.FakeCartItemRepository
 import com.example.supermarketpetproject.core.fakes.FakeProductRepository
 import com.example.supermarketpetproject.productlist.domain.repositories.ProductRepository
+import io.mockk.Runs
+import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -114,5 +118,27 @@ class AddToCartUseCaseTest {
         coVerify(exactly = 0) { productRepository.getProductById(any()) }
         coVerify(exactly = 0) { cartItemRepository.addToCart(any(), any()) }
         coVerify(exactly = 0) { cartItemRepository.getCartItemById(any()) }
+    }
+
+    @Test
+    fun valid_product_calls_addToCart_with_expect_values() = runTest {
+        val productRepository = mockk<ProductRepository>()
+        val cartItemRepository = mockk<CartItemRepository>()
+        val productId = "productId"
+        val quantity = 3
+        val product = product {
+            withId(productId)
+            withStock(10)
+        }
+        coEvery { productRepository.getProductById(productId) } returns flowOf(product)
+        coEvery { cartItemRepository.getCartItemById(productId) } returns null
+        coEvery { cartItemRepository.addToCart(productId, quantity) } just Runs
+        val useCase = AddToCartUseCase(cartItemRepository, productRepository)
+
+        useCase(productId, quantity)
+
+        coVerify(exactly = 1) { productRepository.getProductById(productId) }
+        coVerify(exactly = 1) { cartItemRepository.getCartItemById(productId) }
+        coVerify(exactly = 1) { cartItemRepository.addToCart(productId, quantity) }
     }
 }
