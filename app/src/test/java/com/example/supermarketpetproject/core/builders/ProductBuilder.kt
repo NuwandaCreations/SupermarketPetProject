@@ -22,4 +22,4 @@ class ProductBuilder {
     fun build() = Product(id, name, description, price, category, stock, imageUrl)
 }
 
-fun product(block: ProductBuilder.() -> Unit): Product = ProductBuilder().apply(block).build()
+fun product(block: ProductBuilder.() -> Unit = {}): Product = ProductBuilder().apply(block).build()
