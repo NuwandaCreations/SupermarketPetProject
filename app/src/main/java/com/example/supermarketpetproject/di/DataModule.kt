@@ -10,7 +10,9 @@ import com.example.supermarketpetproject.cart.data.repository.CartItemRepository
 import com.example.supermarketpetproject.cart.domain.repository.CartItemRepository
 import com.example.supermarketpetproject.core.data.coroutines.DefaultDispatchersProvider
 import com.example.supermarketpetproject.core.data.local.database.SupermarketDB
+import com.example.supermarketpetproject.core.data.util.SystemClock
 import com.example.supermarketpetproject.core.domain.coroutines.DispatchersProvider
+import com.example.supermarketpetproject.core.domain.util.Clock
 import com.example.supermarketpetproject.productlist.data.local.database.dao.ProductDao
 import com.example.supermarketpetproject.productlist.data.local.database.dao.PromotionDao
 import com.example.supermarketpetproject.productlist.data.repositories.ProductRepositoryImpl
@@ -80,5 +82,11 @@ object DataModule {
     @Singleton
     fun provideCartRepository(cartItemRepositoryImpl: CartItemRepositoryImpl): CartItemRepository {
         return cartItemRepositoryImpl
+    }
+
+    @Provides
+    @Singleton
+    fun provideClock(systemClock: SystemClock): Clock {
+        return systemClock
     }
 }

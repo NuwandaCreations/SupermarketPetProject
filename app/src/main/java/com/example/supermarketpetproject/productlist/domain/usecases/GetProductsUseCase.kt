@@ -1,6 +1,7 @@
 package com.example.supermarketpetproject.productlist.domain.usecases
 
 import com.example.supermarketpetproject.cart.domain.ex.activeAt
+import com.example.supermarketpetproject.core.domain.util.Clock
 import com.example.supermarketpetproject.productlist.domain.model.ProductWithPromotion
 import com.example.supermarketpetproject.productlist.domain.repositories.ProductRepository
 import com.example.supermarketpetproject.productlist.domain.repositories.PromotionsRepository
@@ -14,7 +15,8 @@ class GetProductsUseCase @Inject constructor(
     private val productRepository: ProductRepository,
     private val promotionsRepository: PromotionsRepository,
     private val settingsRepository: SettingsRepository,
-    private val getPromotionsForProductUseCase: GetPromotionsForProductUseCase
+    private val getPromotionsForProductUseCase: GetPromotionsForProductUseCase,
+    private val clock: Clock
 ) {
     operator fun invoke(): Flow<List<ProductWithPromotion>> {
         return combine(
@@ -22,7 +24,7 @@ class GetProductsUseCase @Inject constructor(
             promotionsRepository.getActivePromotions(),
             settingsRepository.inStockOnly
         ) { products, promotions, inStockOnly ->
-            val now = Instant.now()
+            val now = clock.now()
 
             val activePromotions = promotions.activeAt(now)
 

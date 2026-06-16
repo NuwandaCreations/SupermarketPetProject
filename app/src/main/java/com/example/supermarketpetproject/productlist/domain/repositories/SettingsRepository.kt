@@ -11,7 +11,7 @@ interface SettingsRepository {
     val filtersVisible: Flow<Boolean>
     val sortOption: Flow<SortOption>
 
-    suspend fun setInStockOnly(inStockOnly: Boolean)
+    suspend fun setInStockOnly(value: Boolean)
     suspend fun setThemeMode(value: ThemeMode)
     suspend fun setSelectedCategory(value: String?)
     suspend fun setFiltersVisible(value: Boolean)
