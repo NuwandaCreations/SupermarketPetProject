@@ -3,6 +3,7 @@ package com.example.supermarketpetproject.cart.domain.usecases
 import com.example.supermarketpetproject.cart.domain.ex.activeAt
 import com.example.supermarketpetproject.cart.domain.repository.CartItemRepository
 import com.example.supermarketpetproject.cart.presentation.model.CartItemWithPromotion
+import com.example.supermarketpetproject.core.domain.util.Clock
 import com.example.supermarketpetproject.productlist.domain.model.ProductWithPromotion
 import com.example.supermarketpetproject.productlist.domain.repositories.ProductRepository
 import com.example.supermarketpetproject.productlist.domain.repositories.PromotionsRepository
@@ -18,7 +19,8 @@ class GetCartItemsWithPromotionsUseCase @Inject constructor(
     private val cartItemRepository: CartItemRepository,
     private val productRepository: ProductRepository,
     private val promotionsRepository: PromotionsRepository,
-    private val getPromotionForProduct: GetPromotionsForProductUseCase
+    private val getPromotionForProduct: GetPromotionsForProductUseCase,
+    private val clock: Clock
 )
 {
     operator fun invoke(): Flow<List<CartItemWithPromotion>> {
@@ -32,7 +34,7 @@ class GetCartItemsWithPromotionsUseCase @Inject constructor(
                     promotionsRepository.getActivePromotions()
                 ) { products, promotions ->
 
-                    val now = Instant.now()
+                    val now = clock.now()
                     val activePromotions = promotions.activeAt(now)
                     val productsById = products.associateBy { it.id }
                     cartItems.mapNotNull { cartItem ->

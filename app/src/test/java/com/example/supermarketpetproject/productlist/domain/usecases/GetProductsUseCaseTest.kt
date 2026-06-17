@@ -13,20 +13,20 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
-import java.time.Instant
 
 class GetProductsUseCaseTest {
+    private val now = FakeSystemClock().fakeNow()
+    private val clock = FakeSystemClock().apply { fakeNow() }
+
     private fun useCase(
         products: FakeProductRepository = FakeProductRepository(),
         promotions: FakePromotionsRepository = FakePromotionsRepository(),
         settings: FakeSettingsRepository = FakeSettingsRepository(),
-        clock: FakeSystemClock = FakeSystemClock()
+        clock: FakeSystemClock = this.clock
     ) = GetProductsUseCase(products, promotions, settings, GetPromotionsForProductUseCase(), clock)
 
     @Test
     fun `given ending now promotion when invoke then it should be included`() = runTest {
-        val now = Instant.parse("2027-01-01T00:00:00.00Z")
-        val clock = FakeSystemClock().apply { setTime(now) }
         val productId = "product-id"
         val product = product {
             withId(productId)
@@ -53,8 +53,6 @@ class GetProductsUseCaseTest {
     @Test
     fun `given active promotion when time advances then promotion shoulg not be longer returned`() =
         runTest {
-            val now = Instant.parse("2027-01-01T00:00:00.00Z")
-            val clock = FakeSystemClock().apply { setTime(now) }
             val productId = "product-id"
             val product = product {
                 withId(productId)
