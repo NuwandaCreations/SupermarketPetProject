@@ -17,7 +17,7 @@ class PromotionBuilder {
     fun withType(type: PromotionType) = apply { this.type = type }
     fun withProductIds(productIds: List<String>) = apply { this.productIds = productIds }
     fun withValue(value: Double) = apply { this.value = value}
-    fun buyQuantity(buyQuantity: Int) = apply { this.buyQuantity = buyQuantity }
+    fun withBuyQuantity(buyQuantity: Int) = apply { this.buyQuantity = buyQuantity }
     fun withStartTime(startTime: Instant) = apply { this.startTime = startTime }
     fun withEndTime(endTime: Instant) = apply { this.endTime = endTime }
 

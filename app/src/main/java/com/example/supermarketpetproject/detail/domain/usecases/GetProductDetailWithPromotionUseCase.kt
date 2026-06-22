@@ -9,14 +9,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.time.Instant
 import javax.inject.Inject
-import kotlin.collections.filter
 
 class GetProductDetailWithPromotionUseCase @Inject constructor(
     private val productRepository: ProductRepository,
     private val promotionsRepository: PromotionsRepository,
     private val getPromotionForProduct: GetPromotionsForProductUseCase
-){
-    operator fun invoke(productId: String) : Flow<ProductWithPromotion?> {
+) {
+    operator fun invoke(productId: String): Flow<ProductWithPromotion?> {
         return combine(
             productRepository.getProductById(productId),
             promotionsRepository.getActivePromotions()
